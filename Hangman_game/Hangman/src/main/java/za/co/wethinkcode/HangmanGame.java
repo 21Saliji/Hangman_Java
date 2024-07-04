@@ -25,9 +25,7 @@ public class HangmanGame {
         return words;
     }
 
-
-
-    // Step 2: Select random word from the list
+    // Step 2: Select random word from the list and replace a random character with "_"
     public static String selectRandomWord(ArrayList<String> words) {
         if (words.isEmpty()) {
             throw new IllegalArgumentException("List of words is empty.");
@@ -54,17 +52,98 @@ public class HangmanGame {
         return input.charAt(0);
     }
 
-    // Step 4: Show answer
-    public static void showAnswer(char answer, String selectedWord, int missingLetterIndex) {
-        char correctLetter = selectedWord.charAt(missingLetterIndex);
+    // Step 4: Check if character is missing in the original word
+    public static boolean isMissingChar(String originalWord, String answerWord, char guess) {
+        return originalWord.contains(String.valueOf(guess)) && !answerWord.contains(String.valueOf(guess));
+    }
 
-        if (answer != correctLetter) {
-            System.out.println("The word was: " + selectedWord);
-            System.out.println("Wrong! Do better next time.");
-        } else {
-            System.out.println("The word was: " + selectedWord);
-            System.out.println("Well done! You are awesome!");
+    // Step 5: Fill in correct character in the answer word
+    public static String doCorrectAnswer(String originalWord, String answer, char guess) {
+        StringBuilder sb = new StringBuilder(answer);
+        for (int i = 0; i < originalWord.length(); i++) {
+            if (originalWord.charAt(i) == guess) {
+                sb.setCharAt(i, guess);
+            }
         }
+        return sb.toString();
+    }
+
+    // Step 6: Handle wrong answer and draw hangman figure
+    public static void doWrongAnswer(int remainingGuesses) {
+        switch (remainingGuesses) {
+            case 4:
+                System.out.println("/----");
+                break;
+            case 3:
+                System.out.println("/----");
+                System.out.println("|   0");
+                break;
+            case 2:
+                System.out.println("/----");
+                System.out.println("|   0");
+                System.out.println("|  /|\\");
+                break;
+            case 1:
+                System.out.println("/----");
+                System.out.println("|   0");
+                System.out.println("|  /|\\");
+                System.out.println("|   |");
+                break;
+            case 0:
+                System.out.println("/----");
+                System.out.println("|   0");
+                System.out.println("|  /|\\");
+                System.out.println("|   |");
+                System.out.println("|  / \\");
+                break;
+        }
+        System.out.println("Wrong! Number of guesses left: " + remainingGuesses);
+    }
+
+    // Step 7: Main game loop
+    public static void runGameLoop(String word) {
+        int remainingGuesses = 5;
+        String answer = randomFillWord(word);
+
+        while (true) {
+            System.out.println("Current guess: " + answer);
+
+            char guess = getUserInput();
+            if (guess == '0') {
+                break;
+            }
+
+            if (isMissingChar(word, answer, guess)) {
+                answer = doCorrectAnswer(word, answer, guess);
+                if (word.equals(answer)) {
+                    System.out.println("Congratulations! You've guessed the word: " + word);
+                    break;
+                }
+            } else {
+                remainingGuesses--;
+                doWrongAnswer(remainingGuesses);
+                if (remainingGuesses == 0) {
+                    System.out.println("Sorry, you are out of guesses. The word was: " + word);
+                    break;
+                }
+            }
+        }
+    }
+
+    // Helper method to fill in random characters except one
+    public static String randomFillWord(String word) {
+        Random random = new Random();
+        int charIndex = random.nextInt(word.length());
+        char randomChar = word.charAt(charIndex);
+        StringBuilder sb = new StringBuilder(word.length());
+        for (int i = 0; i < word.length(); i++) {
+            if (word.charAt(i) == randomChar) {
+                sb.append(randomChar);
+            } else {
+                sb.append('_');
+            }
+        }
+        return sb.toString();
     }
 
     // Helper method to ask for file name
@@ -79,9 +158,7 @@ public class HangmanGame {
         return fileName;
     }
 
-
-
-    // Main method to run the game
+    // Main method to start the game
     public static void main(String[] args) {
         String fileName = askFileName();
         ArrayList<String> words = readWordsFromFile(fileName);
@@ -92,7 +169,6 @@ public class HangmanGame {
         }
 
         String selectedWord = selectRandomWord(words);
-        char guessedChar = getUserInput();
-        showAnswer(guessedChar, selectedWord, selectedWord.indexOf('_')); // Assuming '_' was randomly chosen
+        runGameLoop(selectedWord);
     }
 }
