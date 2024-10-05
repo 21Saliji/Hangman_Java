@@ -146,21 +146,10 @@ public class HangmanGame {
         return sb.toString();
     }
 
-    // Helper method to ask for file name
-    public static String askFileName() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Words file? [leave empty to use ShortWords.txt] : ");
-        String fileName = scanner.nextLine().trim();
-        scanner.close();
-        if (fileName.isEmpty()) {
-            fileName = "ShortWords.txt"; // Default file name
-        }
-        return fileName;
-    }
-
+  
     // Main method to start the game
     public static void main(String[] args) {
-        String fileName = askFileName();
+        String fileName = "ShortWords.txt";
         ArrayList<String> words = readWordsFromFile(fileName);
 
         if (words.isEmpty()) {
