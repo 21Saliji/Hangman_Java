@@ -13,8 +13,6 @@ public class WordSelector {
         int randomIndex = random.nextInt(words.size());
         String randomWord = words.get(randomIndex);
 
-        String displayWord = maskWord(randomWord);
-        System.out.println("Guess the word: " + displayWord);
         return randomWord;
 
     }
