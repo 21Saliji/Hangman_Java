@@ -18,7 +18,7 @@ public class FileReaderUtil {
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
-            System.exit(1); // Exit the program if file reading fails
+            System.exit(1);
         }
         return words;
     }

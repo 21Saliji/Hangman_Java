@@ -9,8 +9,14 @@ public class GameLogic {
 
         while (remainingGuesses > 0) {
             System.out.println("Guess the word:  " + maskedWord);
-            char guess = userInput.getUserInput();
+            String userInputString = userInput.getUserInput();
 
+            if (userInputString.equalsIgnoreCase("exit")) {
+                System.out.println("Thanks for playing! Game ended.");
+                return;
+            }
+
+            char guess = userInputString.charAt(0);
             if (isMissingChar(word, maskedWord, guess)) {
                 maskedWord = fillCorrectLetters(word, maskedWord, guess);
                 if (maskedWord.equals(word)) {
